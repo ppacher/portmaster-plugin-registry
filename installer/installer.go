@@ -17,8 +17,21 @@ var (
 	ErrUnsupportedArch    = errors.New("your system architecture is not yet supported")
 )
 
+// PluginInstaller can download and install plugins at a specified
+// target directory.
 type (
+	// Installer defines the interface that is capable of downloading
+	// and installing plugins.
+	Installer interface {
+		// InstallPlugin should install the plugin defined in desc at the
+		// local system and return the path to the installed binary.
+		InstallPlugin(desc structs.PluginDesc) (string, error)
+	}
+
+	// PluginInstaller implements the Installer interface and is capable of
+	// downloading and installing binary plugins at the local host.
 	PluginInstaller struct {
+		// TargetDirectory is the directory where plugins should be installed.
 		TargetDirectory string
 	}
 )
@@ -104,3 +117,6 @@ func findMatchingArtifact(plg structs.PluginDesc) (string, error) {
 
 	return url, nil
 }
+
+// Interface checks
+var _ Installer = new(PluginInstaller)

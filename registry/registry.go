@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"net/url"
 	"sort"
+	"strings"
 	"sync"
 
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/go-version"
 	"github.com/ppacher/portmaster-plugin-registry/structs"
+	"github.com/safing/portmaster/plugin/shared"
 )
 
 // Common errors returned by the registry package.
@@ -19,27 +21,28 @@ var (
 )
 
 type (
+	// Registry manages one or more plugin repositories, fetches their
+	// index files and provides access to available plugins.
+	//
+	// It also supports detecting available plugin updates.
 	Registry struct {
 		l sync.RWMutex
 
 		repos   map[string]structs.Repository
-		plugins map[string]pluginDesc
-	}
-
-	pluginDesc struct {
-		structs.PluginDesc
-
-		Repository string
+		plugins map[string]structs.PluginDesc
 	}
 
 	// repoList is a helper to sort repositories by priority.
 	repoList []structs.Repository
 )
 
+// NewRegistry creates a new plugin registry. Note that the registry
+// does not yet contain any plugin repositories, users should call
+// AddRepository() and finally update the registry by calling Fetch().
 func NewRegistry() *Registry {
 	return &Registry{
 		repos:   make(map[string]structs.Repository),
-		plugins: make(map[string]pluginDesc),
+		plugins: make(map[string]structs.PluginDesc),
 	}
 }
 
@@ -57,13 +60,83 @@ func (reg *Registry) AddRepository(repo structs.Repository) error {
 	return nil
 }
 
+// ListPlugins returns a list of available plugins.
+func (reg *Registry) ListPlugins() []structs.PluginDesc {
+	reg.l.RLock()
+	defer reg.l.RUnlock()
+
+	list := make([]structs.PluginDesc, 0, len(reg.plugins))
+	for _, plg := range reg.plugins {
+		list = append(list, plg)
+	}
+
+	return list
+}
+
+// SearchByTag returns a list of plugins that contain searchTag in their tag list.
+func (reg *Registry) SearchByTag(searchTag string) []structs.PluginDesc {
+	reg.l.RLock()
+	defer reg.l.RUnlock()
+
+	var list []structs.PluginDesc
+L:
+	for _, plg := range reg.plugins {
+		for _, tag := range plg.Tags {
+			if tag == searchTag {
+				list = append(list, plg)
+
+				continue L
+			}
+		}
+	}
+
+	return list
+}
+
+// SearchByType returns a list of plugins that implement type.
+func (reg *Registry) SearchByType(pType shared.PluginType) []structs.PluginDesc {
+	reg.l.RLock()
+	defer reg.l.RUnlock()
+
+	var list []structs.PluginDesc
+L:
+	for _, plg := range reg.plugins {
+		for _, plgType := range plg.PluginTypes {
+			if plgType == pType {
+				list = append(list, plg)
+
+				continue L
+			}
+		}
+	}
+
+	return list
+}
+
+// SearchByName returns a list of plugins that match name.
+func (reg *Registry) SearchByName(name string) []structs.PluginDesc {
+	reg.l.RLock()
+	defer reg.l.RUnlock()
+
+	lowerName := strings.ToLower(name)
+
+	var list []structs.PluginDesc
+	for _, plg := range reg.plugins {
+		if strings.Contains(strings.ToLower(plg.Name), lowerName) {
+			list = append(list, plg)
+		}
+	}
+
+	return list
+}
+
 // Fetch fetches the repository index files and update the local
 // list of available plugins.
 func (reg *Registry) Fetch() error {
 	reg.l.Lock()
 	defer reg.l.Unlock()
 
-	pluginList := make(map[string]pluginDesc)
+	pluginList := make(map[string]structs.PluginDesc)
 
 	repoList := make(repoList, 0, len(reg.repos))
 	for _, repo := range reg.repos {
@@ -87,10 +160,9 @@ func (reg *Registry) Fetch() error {
 				continue
 			}
 
-			pluginList[plg.Name] = pluginDesc{
-				PluginDesc: plg,
-				Repository: repo.Name,
-			}
+			plg.Repository = repo.Name
+
+			pluginList[plg.Name] = plg
 		}
 	}
 

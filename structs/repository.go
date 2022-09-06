@@ -22,6 +22,16 @@ type (
 		Priority int `json:"priority" hcl:"priority"`
 	}
 
+	// IndexMeta holds additional information about a index file.
+	IndexMeta struct {
+		// Version is the version of the index file. This must be set
+		// to v1.0.0 right now.
+		Version string `json:"version" hcl:"version"`
+
+		// Description may hold a human readable description of the repository.
+		Description string `json:"description" hcl:"description,optional"`
+	}
+
 	// Artifact defines the download paths for different operating systems and
 	// architectures.
 	Artifact struct {
@@ -69,10 +79,17 @@ type (
 
 		// Tags holds an arbitrary list of tags for the plugin.
 		Tags []string `json:"tags" hcl:"tags,optional"`
+
+		// Repository is the name of the repository that contains the
+		// plugin.
+		Repository string `json:"repository" hcl:"-"`
 	}
 
 	// RepositoryIndex defines the structure of a repository index file.
 	RepositoryIndex struct {
+		// Meta holds meta-data about the repository.
+		Meta IndexMeta `json:"meta" hcl:"meta,block"`
+
 		// Plugins is the list of plugins available in the repository.
 		Plugins []PluginDesc `json:"plugins" hcl:"plugin,block"`
 	}

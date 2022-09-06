@@ -1,3 +1,8 @@
+meta {
+    version = "v1.0.0"
+    description = "A central place for all your Portmaster plugins"
+}
+
 plugin "yaegi" {
         source = "https://github.com/ppacher/portmaster-plugin-yaegi"
         version = "v0.0.1"

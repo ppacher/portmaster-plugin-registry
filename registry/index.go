@@ -59,6 +59,10 @@ func DecodeIndex(path string, reader io.Reader) (*structs.RepositoryIndex, error
 func ValidateIndex(index *structs.RepositoryIndex) error {
 	var errs = new(multierror.Error)
 
+	if index.Meta.Version != "v1.0.0" {
+		return fmt.Errorf("unsupported index version %q", index.Meta.Version)
+	}
+
 	seenPlugins := make(map[string]struct{})
 
 	for _, plg := range index.Plugins {

@@ -73,6 +73,16 @@ func (reg *Registry) ListPlugins() []structs.PluginDesc {
 	return list
 }
 
+// ByName returns the plugin by name.
+func (reg *Registry) ByName(name string) (structs.PluginDesc, bool) {
+	reg.l.RLock()
+	defer reg.l.RUnlock()
+
+	plg, ok := reg.plugins[name]
+
+	return plg, ok
+}
+
 // SearchByTag returns a list of plugins that contain searchTag in their tag list.
 func (reg *Registry) SearchByTag(searchTag string) []structs.PluginDesc {
 	reg.l.RLock()

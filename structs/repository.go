@@ -73,6 +73,10 @@ type (
 		// License holds the license identifier for the plugin.
 		License string `json:"license" hcl:"license,optional"`
 
+		// Privileged specifies if the plugin needs to be enabled as
+		// privileged or not.
+		Privileged bool `json:"privileged" hcl:"privileged,optional"`
+
 		// Description holds a human readable description of the features and purpose of
 		// a plugin.
 		Description string `json:"description" hcl:"description,optional"`

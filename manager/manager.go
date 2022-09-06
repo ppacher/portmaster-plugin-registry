@@ -264,7 +264,7 @@ func (mng *Manager) registerAllPlugins(ctx context.Context) error {
 		}
 	}
 
-	return nil
+	return multierr.ErrorOrNil()
 }
 
 func (mng *Manager) saveStateFile() error {

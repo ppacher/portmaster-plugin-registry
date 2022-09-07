@@ -119,6 +119,11 @@ func (mng *Manager) Start(ctx context.Context) error {
 		return err
 	}
 
+	upds := mng.detectUpdates()
+	for _, cb := range mng.onUpdateAvailable {
+		cb(upds)
+	}
+
 	ticker := time.NewTicker(10 * time.Minute)
 	go func() {
 		defer ticker.Stop()

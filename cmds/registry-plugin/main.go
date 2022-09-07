@@ -38,6 +38,9 @@ func bootstrapPlugin(ctx context.Context) error {
 
 	manager := manager.NewManager(stateFile, installer, provider, framework.PluginManager())
 
+	// kick of the notification handler that will create error and update notifications.
+	NewNotificationHandler(manager, framework.Notify())
+
 	if err := manager.Start(framework.Context()); err != nil {
 		return err
 	}

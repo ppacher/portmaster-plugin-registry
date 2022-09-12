@@ -79,6 +79,10 @@ func ValidateIndex(index *structs.RepositoryIndex) error {
 		}
 
 		hasArtifact := false
+		if plg.ArtifactTemplate != "" {
+			hasArtifact = true
+		}
+
 		for _, a := range plg.Artifacts {
 			isValid := true
 

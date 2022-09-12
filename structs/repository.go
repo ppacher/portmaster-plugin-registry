@@ -39,6 +39,10 @@ type (
 		// This should follow the values from runtime.GOOS.
 		OS string `json:"os" hcl:",label"`
 
+		// ArchiveFile holds the name of the plugin binary if the downloaded artifact is
+		// an archive and contains more than one file.
+		ArchiveFile string `json:"archiveFile" hcl:"archive_file,optional"`
+
 		// Architecture based download URLs
 
 		AMD64 string `json:"amd64" hcl:"amd64,optional"`
@@ -59,8 +63,42 @@ type (
 		// Version is the current version of the plugin.
 		Version string `json:"version" hcl:"version"`
 
+		// ArtifactTemplate contains a template string using github.com/valyala/fasttemplate
+		// that is used to craft a download link for the target architecture.
+		//
+		// If it's not possible to define a download link using templating
+		// the artifacts can be defined in the Artifacts member below.
+		//
+		// If the resulting URL ends in .tar.gz it will be unpacked automatically.
+		//
+		// For the template, the following substitutions are available:
+		//	- {{os}}: The value of runtime.GOOS
+		//  - {{arch}}: The value of runtime.GOARCH
+		//  - {{version}}: The value of the Version member
+		//  - {{stripped_version}}: The value of the Version member but with leading 'v' removed
+		//  - {{source}}: The value of the Source member.
+		//  - {{plugin_name}}: The value of the Name member
+		//
+		// For example, a ArtifactTemplate for a plugin released to github via goreleaser might look
+		// like:
+		//
+		//	${source}/releases/download/${version}/${pugin_name}_${stripped_version}_${os}_${arch}.tar.gz
+		//
+		ArtifactTemplate string `json:"artifact_template" hcl:"artifact_template,optional"`
+
+		// ArchiveFile holds the name of the plugin binary if the downloaded artifact is
+		// an archive and contains more than one file.
+		//
+		// Note that it's also possible to specify the ArchiveFile in dedicated Artifact
+		// definitions below as well. If both are specified, the ArchiveFile in the Artifact
+		// takes precendence.
+		ArchiveFile string `json:"archiveFile" hcl:"archive_file,optional"`
+
 		// Artifacts defines the download URLs for the plugin binary for
 		// different architectures and operating systems.
+		//
+		// If Artifacts and ArtifactTemplate is specified than Artifacts take precedence
+		// if there's a matching architecutre definition.
 		Artifacts []Artifact `json:"artifacts" hcl:"artifact,block"`
 
 		// PluginTypes defines the list of plugin types implemented
@@ -86,7 +124,7 @@ type (
 
 		// Repository is the name of the repository that contains the
 		// plugin.
-		Repository string `json:"repository" hcl:"-"`
+		Repository string `json:"repository"`
 	}
 
 	// RepositoryIndex defines the structure of a repository index file.

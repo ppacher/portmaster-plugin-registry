@@ -26,6 +26,25 @@ func NewNotificationHandler(manager *manager.Manager, notify notification.Servic
 	manager.OnFetchDone(handler.onFetchDone)
 	manager.OnUpdateAvailable(handler.onUpdateAvailable)
 
+	_, err := framework.Notify().CreateNotification(framework.Context(), &proto.Notification{
+		EventId:      "plugin-registry:peristent-notification",
+		Title:        "PECS",
+		Message:      "PECS is successfully installed and running",
+		ShowOnSystem: false,
+		Actions: []*proto.NotificationAction{
+			{
+				Id:   "open",
+				Text: "Open",
+				ActionType: &proto.NotificationAction_OpenUrl{
+					OpenUrl: "https://github.com/ppacher/portmaster-plugin-registry",
+				},
+			},
+		},
+	})
+	if err != nil {
+		hclog.L().Error("failed to create persistant info notification", "error", err.Error())
+	}
+
 	return handler
 }
 

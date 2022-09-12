@@ -163,7 +163,7 @@ func (mng *Manager) InstallPlugin(ctx context.Context, name string) error {
 		return err
 	}
 
-	path, err := mng.installer.InstallPlugin(plg)
+	path, err := mng.installer.InstallPlugin(ctx, plg)
 	if err != nil {
 		return fmt.Errorf("failed to install: %w", err)
 	}

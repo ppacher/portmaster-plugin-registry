@@ -1,14 +1,15 @@
 package registry
 
 import (
+	"context"
 	"errors"
 	"fmt"
-	"net/url"
+	"os"
 	"sort"
 	"strings"
 	"sync"
 
-	"github.com/hashicorp/go-retryablehttp"
+	"github.com/hashicorp/go-getter/v2"
 	"github.com/hashicorp/go-version"
 	"github.com/ppacher/portmaster-plugin-registry/structs"
 	"github.com/safing/portmaster/plugin/shared"
@@ -215,18 +216,21 @@ func (reg *Registry) UpdateAvailable(plgName string, currentVersion string) (str
 }
 
 func fetchIndex(repo structs.Repository) (*structs.RepositoryIndex, error) {
-	u, err := url.Parse(repo.URL)
+	res, err := new(getter.Client).Get(context.Background(), &getter.Request{
+		Src: repo.URL,
+		Dst: os.TempDir(),
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := retryablehttp.Get(repo.URL)
+	f, err := os.Open(res.Dst)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer f.Close()
 
-	index, err := DecodeIndex(u.Path, res.Body)
+	index, err := DecodeIndex(res.Dst, f)
 	if err != nil {
 		return nil, err
 	}

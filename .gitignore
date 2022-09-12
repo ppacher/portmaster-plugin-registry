@@ -1,2 +1,4 @@
 /registry-plugin
 /registry-util
+node_modules
+.cache

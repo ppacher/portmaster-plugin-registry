@@ -10,13 +10,12 @@ plugin "yaegi" {
             "decider"
         ]
         author = "Patrick Pacher"
-        license = "GPL"
+        license = "MIT"
         description = "Use the Go language to write custom rules"
         tags = ["rule-as-code"]
 
-        artifact "linux" {
-            amd64 = ""
-        }
+        artifact_template = "{{source}}/releases/download/{{version}}/{{archive_file}}_{{stripped_version}}_{{os}}_{{arch}}.tar.gz"
+        archive_file = "portmaster-plugin-yaegi"
 }
 
 plugin "prometheus" {
@@ -26,11 +25,10 @@ plugin "prometheus" {
             "reporter"
         ]
         author = "Patrick Pacher"
-        license = "GPL"
+        license = "MIT"
         description = "Export connection metrics to prometheus"
-        artifact "linux" {
-            amd64 = ""
-        }
+        artifact_template = "{{source}}/releases/download/{{version}}/{{archive_file}}_{{stripped_version}}_{{os}}_{{arch}}.tar.gz"
+        archive_file = "portmaster-plugin-prometheus"
 }
 
 plugin "hostsfile" {
@@ -40,11 +38,10 @@ plugin "hostsfile" {
             "resolver"
         ]
         author = "Patrick Pacher"
-        license = "GPL"
+        license = "MIT"
         description = "Add support for /etc/hosts"
-        artifact "linux" {
-            amd64 = ""
-        }
+        artifact_template = "{{source}}/releases/download/{{version}}/{{archive_file}}_{{stripped_version}}_{{os}}_{{arch}}.tar.gz"
+        archive_file = "portmaster-plugin-hosts"
 }
 
 plugin "dnscrypt-client" {
@@ -54,9 +51,8 @@ plugin "dnscrypt-client" {
             "resolver"
         ]
         author = "Patrick Pacher"
-        license = "GPL"
+        license = "MIT"
         description = "Add support to use DNSCrypt servers"
-        artifact "linux" {
-            amd64 = ""
-        }
+        artifact_template = "{{source}}/releases/download/{{version}}/{{archive_file}}_{{stripped_version}}_{{os}}_{{arch}}.tar.gz"
+        archive_file = "portmaster-plugin-dnscrypt"
 }

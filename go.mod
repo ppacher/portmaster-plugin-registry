@@ -13,7 +13,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.14.0
 	github.com/safing/portmaster v0.9.5
 	github.com/spf13/cobra v1.5.0
-	github.com/valyala/fasttemplate v1.2.1
+	github.com/valyala/fasttemplate v1.2.2
 )
 
 require (

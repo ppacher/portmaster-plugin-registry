@@ -10,7 +10,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-retryablehttp v0.7.1
 	github.com/hashicorp/go-version v1.6.0
-	github.com/hashicorp/hcl/v2 v2.14.0
+	github.com/hashicorp/hcl/v2 v2.16.1
 	github.com/safing/portmaster v0.9.5
 	github.com/spf13/cobra v1.5.0
 	github.com/valyala/fasttemplate v1.2.1
@@ -38,7 +38,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/ulikunitz/xz v0.5.8 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/zclconf/go-cty v1.8.0 // indirect
+	github.com/zclconf/go-cty v1.12.1 // indirect
 	golang.org/x/net v0.0.0-20220826154423-83b083e8dc8b // indirect
 	golang.org/x/sys v0.0.0-20220829200755-d48e67d00261 // indirect
 	golang.org/x/text v0.3.7 // indirect
